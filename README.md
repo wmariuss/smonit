@@ -1,0 +1,2 @@
+# smonit
+Salt monitoring
