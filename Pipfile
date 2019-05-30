@@ -1,0 +1,15 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pep8 = "*"
+mypy = "*"
+pylint = "*"
+
+[packages]
+prometheus-client = "==0.6.0"
+
+[requires]
+python_version = "3.6"
