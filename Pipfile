@@ -9,7 +9,8 @@ mypy = "*"
 pylint = "*"
 
 [packages]
-prometheus-client = "==0.6.0"
+influxdb = "==5.2.2"
+falcon = "==2.0.0"
 
 [requires]
 python_version = "3.6"
