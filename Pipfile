@@ -1,0 +1,19 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pep8 = "*"
+mypy = "*"
+pylint = "*"
+
+[packages]
+influxdb = "==5.2.2"
+falcon = "==2.0.0"
+gunicorn = "==19.9.0"
+rq = "==1.0"
+invoke = "*"
+
+[requires]
+python_version = "3.6"

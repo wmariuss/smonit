@@ -1,0 +1,29 @@
+version: "3.7"
+
+services:
+  influxdb:
+    image: influxdb:1.7.6
+    container_name: influxdb
+    ports:
+      - "8086:8086"
+      - "8090:8090"
+    env_file:
+      - '.env'
+    volumes:
+      - influxdb-storage:/var/lib/influxdb
+
+  grafana:
+    image: grafana/grafana:6.2.1
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    env_file:
+      - '.env'
+    links:
+      - influxdb
+    volumes:
+      - grafana-storage:/var/lib/grafana
+
+volumes:
+  influxdb-storage:
+  grafana-storage:
