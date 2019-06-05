@@ -1,6 +1,6 @@
 # smonit
 
-Salt monitoring
+Monitor salt activities.
 
 ## Requirements
 
