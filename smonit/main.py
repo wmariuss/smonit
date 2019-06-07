@@ -1,11 +1,15 @@
 import falcon
+import pprint
 
-from smonit.salt import Api
+from smonit.services.api import Salt
 from smonit.views import Index
 
-salt_api = Api()
+salt = Salt()
+minions = salt.minions_accepted
 
-print(salt_api.minion())
+for minion in minions:
+    pprint.pprint(salt.cmd(minion, 'state.highstate'))
+    pprint.pprint(salt.changes(minion))
 
 app = falcon.API()
 app.add_route('/', Index())
