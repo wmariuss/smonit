@@ -1,15 +1,15 @@
 import logging
 
-from smonit.exceptions import SaltExceptions
-
 try:
     import salt.config
     import salt.client
     import salt.utils
-    import salt.wheel
 except ImportError:
     raise RuntimeError(
         "You must install salt package to use this service")
+
+from salt.key import Key
+from smonit.exceptions import SaltExceptions
 
 log = logging.getLogger(__name__)
 
@@ -18,11 +18,11 @@ class Salt(object):
     def __init__(self):
         self._opts = salt.config.master_config('/etc/salt/master')
         self._lc = salt.client.LocalClient()
-        self._wc = salt.wheel.WheelClient(self._opts)
+        self.keys = Key(self._opts)
 
     @property
     def get_minions(self):
-        return self._wc.cmd('key.list_all')
+        return self.keys.list_keys()
 
     @property
     def minions_accepted(self):
@@ -87,24 +87,41 @@ class Salt(object):
         '''
         result = self.cmd(minion, 'state.highstate')
         changes_list = {}
-        change_ids_list = []
+        result = result[minion][return_key]
 
-        if result[minion][return_key]:
-            values = result[minion][return_key].values()
-
-            for info in values:
-                state = info['__sls__']
-                if state:
+        if result:
+            try:
+                values = result.values()
+            except AttributeError:
+                log.critical(f'No salt data received for {minion} minion. Could be some issues about ID duplications')
+            else:
+                for info in values:
+                    state = info['__sls__']
                     declaration_id = info['__id__']
                     changes = info['changes']
 
                     if len(changes) > 0:
-                        if declaration_id not in change_ids_list:
-                            change_ids_list.append(declaration_id)
+                        change_ids_list = []
+                        failed_change_ids_list = []
+                        no_changes_ids_list = []
+
+                        if changes['stdout'] != '':
+                            if declaration_id not in change_ids_list:
+                                change_ids_list.append(declaration_id)
+                        else:
+                            if declaration_id not in failed_change_ids_list:
+                                failed_change_ids_list.append(declaration_id)
+                    else:
+                        if declaration_id not in no_changes_ids_list:
+                            no_changes_ids_list.append(declaration_id)
 
                     # state name and the list of IDs declaration
                     changes_list.update({
-                        state: change_ids_list
+                        state: {
+                            'success': change_ids_list,
+                            'errors': failed_change_ids_list,
+                            'no_changes': no_changes_ids_list
+                        }
                     })
 
         return changes_list
