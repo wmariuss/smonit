@@ -33,6 +33,18 @@ class Salt(object):
 
         return minions_list
 
+    @property
+    def minions_pending(self):
+        return [minion for minion in self.get_minions['minions_pre']]
+
+    @property
+    def minions_rejected(self):
+        return [minion for minion in self.get_minions['minions_rejected']]
+
+    @property
+    def minions_denied(self):
+        return [minion for minion in self.get_minions['minions_denied']]
+
     def respond_minion(self, minion):
         '''
         :param minion' server name
