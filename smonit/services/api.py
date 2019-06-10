@@ -80,48 +80,42 @@ class Salt(object):
 
         return states
 
-    def changes(self, minion, return_key='ret'):
+    def _minion_info(self, minion, return_key='ret'):
         '''
         :param minion' server name
         :param return_key: key return. Can be ret or return
         '''
         result = self.cmd(minion, 'state.highstate')
-        changes_list = {}
         result = result[minion][return_key]
 
         if result:
             try:
                 values = result.values()
             except AttributeError:
-                log.critical(f'No salt data received for {minion} minion. Could be some issues about ID duplications')
-            else:
-                for info in values:
-                    state = info['__sls__']
-                    declaration_id = info['__id__']
-                    changes = info['changes']
+                log.critical(f'ID duplication issues on {minion} minion')
+                values = None
 
-                    if len(changes) > 0:
-                        change_ids_list = []
-                        failed_change_ids_list = []
-                        no_changes_ids_list = []
+        return values
 
-                        if changes['stdout'] != '':
-                            if declaration_id not in change_ids_list:
-                                change_ids_list.append(declaration_id)
-                        else:
-                            if declaration_id not in failed_change_ids_list:
-                                failed_change_ids_list.append(declaration_id)
-                    else:
-                        if declaration_id not in no_changes_ids_list:
-                            no_changes_ids_list.append(declaration_id)
+    def changes(self, minion):
+        '''
+        :param minion: server id connected
+        '''
+        values = self._minion_info(minion)
+        changes_list = {}
 
-                    # state name and the list of IDs declaration
-                    changes_list.update({
-                        state: {
-                            'success': change_ids_list,
-                            'errors': failed_change_ids_list,
-                            'no_changes': no_changes_ids_list
-                        }
-                    })
+        if values:
+            for info in values:
+                state = info['__sls__']
+                declaration_id = info['__id__']
+                changes = info['changes']
+
+                if len(changes) > 0:
+                    if changes['stdout'] != '' or changes['stderr'] != '':
+                        changes_list.update({
+                            declaration_id: {
+                                state: changes
+                            }
+                        })
 
         return changes_list
