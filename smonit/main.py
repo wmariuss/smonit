@@ -3,13 +3,17 @@ import logging
 import pprint
 
 from smonit.services.api import Salt
+from smonit.services.api import InfluxDB
 from smonit.views import Index
 
 salt = Salt()
+influx = InfluxDB()
 minions = salt.minions_accepted
 
-pprint.pprint(salt.cmd('saltd', 'state.highstate'))
+# pprint.pprint(salt.cmd('saltd', 'state.highstate'))
 pprint.pprint(salt.changes('saltd'))
+print(influx.list_databases)
+print(influx.create_database('test'))
 
 # for minion in minions:
 #     pprint.pprint(salt.cmd(minion, 'state.highstate'))

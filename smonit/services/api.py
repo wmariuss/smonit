@@ -1,4 +1,7 @@
+import os
 import logging
+import timeit
+from influxdb import InfluxDBClient
 
 try:
     import salt.config
@@ -118,16 +121,41 @@ class Salt(object):
 
         if values:
             for info in values:
-                state = info['__sls__']
-                declaration_id = info['__id__']
                 changes = info['changes']
 
                 if len(changes) > 0:
                     if changes['stdout'] != '' or changes['stderr'] != '':
                         changes_list.update({
-                            declaration_id: {
-                                state: changes
+                            info['__id__']: {
+                                info['__sls__']: changes
                             }
                         })
 
         return changes_list
+
+
+class InfluxDB(object):
+    def __init__(self, endpoint=None, user=None, password=None, database=None):
+        if endpoint:
+            self.host, self.port = endpoint.split(':')
+        else:
+            self.host, self.port = os.environ.get('INFLUXDB_ENDPOINT',
+                                                  'localhost:8086').split(':')
+        self.user = user or os.environ.get('INFLUXDB_USER')
+        self.password = password or os.environ.get('INFLUXDB_PASSWORD')
+        self.database = database or os.environ.get('INFLUXDB_DB', 'smonit')
+
+    @property
+    def _connection(self):
+        return InfluxDBClient(self.host,
+                              self.port,
+                              self.user,
+                              self.password,
+                              self.database)
+
+    @property
+    def list_databases(self):
+        return self._connection.get_list_database()
+
+    def create_database(self, database):
+        return self._connection.create_database(database)
