@@ -1,6 +1,5 @@
 import os
 import logging
-import timeit
 from influxdb import InfluxDBClient
 
 try:
@@ -13,6 +12,7 @@ except ImportError:
 
 from salt.key import Key
 from smonit.exceptions import SaltExceptions
+from smonit.exceptions import GeneralExceptions
 
 log = logging.getLogger(__name__)
 
@@ -135,15 +135,12 @@ class Salt(object):
 
 
 class InfluxDB(object):
-    def __init__(self, endpoint=None, user=None, password=None, database=None):
-        if endpoint:
-            self.host, self.port = endpoint.split(':')
-        else:
-            self.host, self.port = os.environ.get('INFLUXDB_ENDPOINT',
-                                                  'localhost:8086').split(':')
-        self.user = user or os.environ.get('INFLUXDB_USER')
-        self.password = password or os.environ.get('INFLUXDB_PASSWORD')
-        self.database = database or os.environ.get('INFLUXDB_DB', 'smonit')
+    def __init__(self):
+        self.host, self.port = os.environ.get('INFLUXDB_ENDPOINT',
+                                              'localhost:8086').split(':')
+        self.user = os.environ.get('INFLUXDB_USER', 'smonit')
+        self.password = os.environ.get('INFLUXDB_PASSWORD', 'smonit')
+        self.database = os.environ.get('INFLUXDB_DB', 'smonit')
 
     @property
     def _connection(self):
@@ -154,8 +151,37 @@ class InfluxDB(object):
                               self.database)
 
     @property
-    def list_databases(self):
-        return self._connection.get_list_database()
+    def _ping(self):
+        import urllib3
+        import requests
 
-    def create_database(self, database):
-        return self._connection.create_database(database)
+        status = None
+        try:
+            self._connection.ping()
+            status = True
+        except (urllib3.exceptions.NewConnectionError,
+                urllib3.exceptions.MaxRetryError,
+                requests.exceptions.ConnectionError):
+            log.critical(f'It seems influxdb server is down or no any connection to the server')
+        return status
+
+    @property
+    def list_databases(self):
+        if self._ping:
+            return self._connection.get_list_database()
+
+    def create_database(self, database=None):
+        _db = self.database
+
+        if self._ping:
+            if database:
+                _db = database
+            return self._connection.create_database(_db)
+
+    def write_multiple_data(self, data):
+        if self._ping:
+            return self._connection.write_points(data)
+
+    def query(self, sql):
+        if self._ping:
+            return self._connection.query(sql)
