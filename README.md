@@ -26,8 +26,8 @@ What are the features:
 
 Development
 
-* pip install pipenv
-* pipenv install --system --deploy
+* `pip install pipenv`
+* `pipenv install --system --deploy`
 
 ## Usage
 
