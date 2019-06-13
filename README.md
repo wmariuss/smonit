@@ -1,5 +1,7 @@
 # smonit
 
+[__This is a prototype__]
+
 Monitor salt activities.
 
 What are the features:
