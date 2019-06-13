@@ -29,6 +29,7 @@ class Salt(object):
 
     @property
     def minions_accepted(self):
+        # List all connected/accepted minions
         minions_list = []
         for minion in self.get_minions['minions']:
             if minion:
@@ -38,14 +39,17 @@ class Salt(object):
 
     @property
     def minions_pending(self):
+        # List all minions with pending status
         return [minion for minion in self.get_minions['minions_pre']]
 
     @property
     def minions_rejected(self):
+        # List all rejected minions
         return [minion for minion in self.get_minions['minions_rejected']]
 
     @property
     def minions_denied(self):
+        # List all denied minions
         return [minion for minion in self.get_minions['minions_denied']]
 
     def respond_minion(self, minion):
@@ -136,19 +140,14 @@ class Salt(object):
 
 class InfluxDB(object):
     def __init__(self):
-        self.host, self.port = os.environ.get('INFLUXDB_ENDPOINT',
-                                              'localhost:8086').split(':')
+        self.host, self.port = os.environ.get('INFLUXDB_ENDPOINT', 'localhost:8086').split(':')
         self.user = os.environ.get('INFLUXDB_USER', 'smonit')
         self.password = os.environ.get('INFLUXDB_PASSWORD', 'smonit')
         self.database = os.environ.get('INFLUXDB_DB', 'smonit')
 
     @property
     def _connection(self):
-        return InfluxDBClient(self.host,
-                              self.port,
-                              self.user,
-                              self.password,
-                              self.database)
+        return InfluxDBClient(self.host, self.port, self.user, self.password, self.database)
 
     @property
     def _ping(self):
@@ -185,3 +184,7 @@ class InfluxDB(object):
     def query(self, sql):
         if self._ping:
             return self._connection.query(sql)
+
+    def drop_database(self, database):
+        if self._ping:
+            return self._connection.drop_database(database)
