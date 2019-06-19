@@ -2,12 +2,12 @@ from datetime import datetime
 from time import sleep
 
 from smonit.services.api import Salt
-from smonit.services.api import InfluxDB
+from smonit.services.api import InfluxDb
 from smonit.schema import Data
 
 
 salt = Salt()
-influxdb = InfluxDB()
+influxdb = InfluxDb()
 schema = Data()
 
 
@@ -39,15 +39,15 @@ def rejected():
     return influxdb.write_multiple_data(data)
 
 
-def active(minion):
+def respond(minion):
     success_respond = salt.respond_minion(minion)
-    time = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
-    value = 0
+    tag = False
+    value = 1
 
     if success_respond:
-        value = 1
+        tag = True
 
-    data = schema.with_tag('active', value, minion)
+    data = schema.responding('respond', tag, minion, value)
 
     return influxdb.write_multiple_data(data)
 
@@ -56,28 +56,34 @@ def check_changes(minion):
     respond = salt.respond_minion(minion)
 
     if respond:
-        changes_result = salt.changes(minion)
-        errors = 0
-        success = 0
+        result = salt.changes(minion)
+        states_list = []
+        data_list = []
 
-        if changes_result:
-            for identification_id, state in changes_result.items():
-                for state_name in state:
-                    state_info = state.get(state_name)
+        if result:
+            for identification_id, states in result.items():
+                for state in states:
+                    if state not in states_list:
+                        states_list.append(state)
+
+                    state_info = states.get(state)
                     change_state_out = state_info.get('stdout')
                     change_state_err = state_info.get('stderr')
 
-                    if change_state_out != '':
-                        success = 1
-                    if change_state_err != '':
-                        errors = 1
+                    print(change_state_out)
 
-                    data = schema.changes_minion(identification_id,
-                                                 minion,
-                                                 state_name,
-                                                 errors,
-                                                 success)
+                    # if change_state_out != '':
+                    #     success = 1
+                    # if change_state_err != '':
+                    #     errors = 1
 
-                    print(data)
-                    influxdb.write_multiple_data(data)
-    return True
+                    # data = schema.changes(identification_id,
+                    #                       minion,
+                    #                       state_name,
+                    #                       errors,
+                    #                       success)
+                    # data_list.append(data)
+        # Add number of states
+        data_number_states = schema.with_tag('number_states', minion, len(states_list))
+        influxdb.write_multiple_data(data_number_states)
+    return

@@ -1,6 +1,5 @@
 import os
 import logging
-from influxdb import InfluxDBClient
 
 try:
     import salt.config
@@ -9,6 +8,12 @@ try:
 except ImportError:
     raise RuntimeError(
         "You must install salt package to use this service")
+
+try:
+    from influxdb import InfluxDBClient
+except ImportError:
+    raise RuntimeError(
+        "Install influxdb lib/package")
 
 from salt.key import Key
 from smonit.exceptions import SaltExceptions
@@ -138,7 +143,7 @@ class Salt(object):
         return changes_list
 
 
-class InfluxDB(object):
+class InfluxDb(object):
     def __init__(self):
         self.host, self.port = os.environ.get('INFLUXDB_ENDPOINT', 'localhost:8086').split(':')
         self.user = os.environ.get('INFLUXDB_USER', 'smonit')

@@ -29,6 +29,8 @@ Development
 * `pip install pipenv`
 * `pipenv install --system --deploy`
 
+For stable version, please check [releases](https://github.com/wmariuss/smonit/tags) section.
+
 ## Usage
 
 * Run `sh start.sh`

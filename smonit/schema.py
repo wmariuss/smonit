@@ -1,14 +1,14 @@
-from datetime import datetime
+from smonit.utils import time
 
 
 class Data(object):
     def __init__(self):
-        self.time = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+        pass
 
     def default(self, mesurement, value):
         data = [{
             "measurement": mesurement,
-            "time": self.time,
+            "time": time(),
             "fields": {
                 "value": value
             }
@@ -16,12 +16,12 @@ class Data(object):
 
         return data
 
-    def with_tag(self, mesurement, value, tag_name):
+    def with_tag(self, table_name, tag, value):
         data = [{
-            "measurement": mesurement,
-            "time":  self.time,
+            "measurement": table_name,
+            "time": time(),
             "tags": {
-                "host": tag_name
+                "host": tag
             },
             "fields": {
                 "value": value
@@ -30,10 +30,28 @@ class Data(object):
 
         return data
 
-    def changes_minion(self, identification_id, minion, state, errors, success):
+    def responding(self, mesurement, tag, minion, value):
         data = [{
+            "measurement": mesurement,
+            "time": time(),
+            "tags": {
+                "active": tag
+            },
+            "fields": {
+                "minion": minion,
+                "value": value
+            }
+        }]
+
+        return data
+
+    def changes(self, identification_id, minion, state, errors, success):
+        data = {
             "measurement": "changes",
-            "time": self.time,
+            "time": time(),
+            "tags": {
+                "minion": minion
+            },
             "fields": {
                 "id_name": identification_id,
                 "errors": errors,
@@ -41,6 +59,6 @@ class Data(object):
                 "state": state,
                 "host": minion
             }
-        }]
+        }
 
         return data
