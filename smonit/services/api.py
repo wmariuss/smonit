@@ -129,16 +129,21 @@ class Salt(object):
         changes_list = {}
 
         if values:
-            for info in values:
-                changes = info['changes']
+            if 'disabled'.capitalize() not in values:
+                for info in values:
+                    changes = info['changes']
 
-                if len(changes) > 0:
-                    if changes['stdout'] != '' or changes['stderr'] != '':
-                        changes_list.update({
-                            info['__id__']: {
-                                info['__sls__']: changes
-                            }
-                        })
+                    if len(changes) > 0:
+                        if changes['stdout'] != '' or changes['stderr'] != '':
+                            changes_list.update({
+                                info['__id__']: {
+                                    info['__sls__']: changes
+                                }
+                            })
+            else:
+                changes_list.update({
+                    'disabled': 'highstate'
+                })
 
         return changes_list
 
@@ -193,3 +198,7 @@ class InfluxDb(object):
     def drop_database(self, database):
         if self._ping:
             return self._connection.drop_database(database)
+
+    def write_points(self, data):
+        if self._ping:
+            return self._connection.write_points(data)

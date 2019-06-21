@@ -6,12 +6,12 @@ Monitor salt activities.
 
 What are the features:
 
-* collect all minions (connected, pending, denied, rejected, active)
+* collect all minions status (connected, pending, denied, rejected, active)
 * collect states for every minion
-* changes (success and failures) for every state
+* changes (success and failure) for every state
 * execution time and status of the last highstate run
 * minions with highstate disabled
-* can be used instead of the default salt scheduler
+* can be used instead of default salt scheduler
 * integrate easily with Grafana
 * more soon
 
@@ -23,8 +23,6 @@ What are the features:
 * `redis >=  4.0.9`
 
 ## Install
-
-Development
 
 * `pip install pipenv`
 * `pipenv install --system --deploy`

@@ -45,20 +45,17 @@ class Data(object):
 
         return data
 
-    def changes(self, identification_id, minion, state, errors, success):
-        data = {
-            "measurement": "changes",
+    def state_changes(self, minion, state, value):
+        data = [{
+            "measurement": "state_changes",
             "time": time(),
             "tags": {
                 "minion": minion
             },
             "fields": {
-                "id_name": identification_id,
-                "errors": errors,
-                "success": success,
                 "state": state,
-                "host": minion
+                "changes": value
             }
-        }
+        }]
 
         return data

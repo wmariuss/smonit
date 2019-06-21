@@ -58,32 +58,38 @@ def check_changes(minion):
     if respond:
         result = salt.changes(minion)
         states_list = []
-        data_list = []
+        states_changes_list = []
+        highstate_value = 0
 
-        if result:
-            for identification_id, states in result.items():
-                for state in states:
-                    if state not in states_list:
-                        states_list.append(state)
+        if len(result) > 0:
+            if 'disabled' not in result:
+                # Set value to 1 if highstate run is enabled
+                highstate_value = 1
 
-                    state_info = states.get(state)
-                    change_state_out = state_info.get('stdout')
-                    change_state_err = state_info.get('stderr')
+                for identification_id, states in result.items():
+                    for state in states:
+                        if state not in states_list:
+                            states_list.append(state)
 
-                    print(change_state_out)
+                        state_info = states.get(state)
+                        stdout = state_info.get('stdout')
+                        stderr = state_info.get('stderr')
 
-                    # if change_state_out != '':
-                    #     success = 1
-                    # if change_state_err != '':
-                    #     errors = 1
+                        if stdout != '' or stderr != '':
+                            # Add all states with status change. Add even for duplication
+                            states_changes_list.append(state)
 
-                    # data = schema.changes(identification_id,
-                    #                       minion,
-                    #                       state_name,
-                    #                       errors,
-                    #                       success)
-                    # data_list.append(data)
-        # Add number of states
-        data_number_states = schema.with_tag('number_states', minion, len(states_list))
-        influxdb.write_multiple_data(data_number_states)
+                # Add only number of states
+                data_number_states = schema.with_tag('number_states', minion, len(states_list))
+                influxdb.write_multiple_data(data_number_states)
+
+                # Add number of states with status change
+                for state in states_list:
+                    changes_number = states_changes_list.count(state)
+                    data_number_states_changes = schema.state_changes(minion, state, changes_number)
+                    influxdb.write_points(data_number_states_changes)
+                    sleep(5)
+
+            data_highstate_disabled = schema.with_tag('highstate_disabled', minion, highstate_value)
+            influxdb.write_multiple_data(data_highstate_disabled)
     return
