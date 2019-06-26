@@ -30,6 +30,10 @@ For stable version, please check [releases](https://github.com/wmariuss/smonit/t
 
 Soon.
 
+## Contribute
+
+Contributions are always welcome. Please fork the repo, create a pull request against master, and be sure tests pass. See the [GitHub Flow](https://guides.github.com/introduction/flow/) for details.
+
 ## Authors
 
 * [Marius Stanca](mailto:me@marius.xyz)
