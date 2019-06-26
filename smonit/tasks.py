@@ -98,6 +98,14 @@ def check_changes(minion):
                     influxdb.write_points(data_number_failure_changes)
                     sleep(2)
 
+                highstate_issue = 1
+
+                if len(failure_state_changes) >= 1:
+                    highstate_issue = 0
+
+            data_highstate_issue = schema.with_tag('highstate_issue', minion, highstate_issue)
+            influxdb.write_multiple_data(data_highstate_issue)
+
             data_highstate_disabled = schema.with_tag('highstate_disabled', minion, highstate_value)
             influxdb.write_multiple_data(data_highstate_disabled)
     return

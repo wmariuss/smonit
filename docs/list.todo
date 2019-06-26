@@ -1,1 +1,9 @@
-TODO:
+Smonit:
+    ✔ Show minions status - connected, pending, denied, rejected, active or responding @done(19-06-27 00:44)
+    ✔ Collect how many states are attached to the minion(s) @done(19-06-27 00:44)
+    ✔ Show changes for every state (success and failure) @done(19-06-27 00:44)
+    ▪ Execution time for the last highstate run
+    ✔ Status of the last highstate (success or failure) @done(19-06-27 00:44)
+    ✔ Minions with highstate disabled @done(19-06-27 00:44)
+    ✔ Use this tool as scheduler (no need the default one) @done(19-06-27 00:44)
+    ✔ Easy integration with Grafana @done(19-06-27 00:44)

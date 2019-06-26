@@ -4,16 +4,9 @@
 
 Monitor salt activities.
 
-What are the features:
+## Roadmap
 
-* collect all minions status (connected, pending, denied, rejected, active)
-* collect states for every minion
-* changes (success and failure) for every state
-* execution time and status of the last highstate run
-* minions with highstate disabled
-* can be used instead of default salt scheduler
-* integrate easily with Grafana
-* more soon
+Check the list [here](docs/list.todo).
 
 ## Requirements
 
