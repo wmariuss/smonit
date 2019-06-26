@@ -59,6 +59,7 @@ def check_changes(minion):
         result = salt.changes(minion)
         states_list = []
         states_changes_list = []
+        failure_state_changes = []
         highstate_value = 0
 
         if len(result) > 0:
@@ -78,6 +79,9 @@ def check_changes(minion):
                         if stdout != '' or stderr != '':
                             # Add all states with status change. Add even for duplication
                             states_changes_list.append(state)
+                        if stderr != '':
+                            # Add all states with status failed. For duplication too
+                            failure_state_changes.append(state)
 
                 # Add only number of states
                 data_number_states = schema.with_tag('number_states', minion, len(states_list))
@@ -88,7 +92,11 @@ def check_changes(minion):
                     changes_number = states_changes_list.count(state)
                     data_number_states_changes = schema.state_changes(minion, state, changes_number)
                     influxdb.write_points(data_number_states_changes)
-                    sleep(5)
+                    # Add failure changes
+                    failure_number = failure_state_changes.count(state)
+                    data_number_failure_changes = schema.failure_changes(minion, state, failure_number)
+                    influxdb.write_points(data_number_failure_changes)
+                    sleep(2)
 
             data_highstate_disabled = schema.with_tag('highstate_disabled', minion, highstate_value)
             influxdb.write_multiple_data(data_highstate_disabled)

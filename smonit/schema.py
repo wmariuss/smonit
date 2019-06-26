@@ -59,3 +59,18 @@ class Data(object):
         }]
 
         return data
+
+    def failure_changes(self, minion, state, value):
+        data = [{
+            "measurement": "failure_states",
+            "time": time(),
+            "tags": {
+                "minion": minion
+            },
+            "fields": {
+                "state": state,
+                "failure": value
+            }
+        }]
+
+        return data
