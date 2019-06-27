@@ -11,6 +11,7 @@ services:
       - '.env.docker'
     volumes:
       - influxdb-storage:/var/lib/influxdb
+    restart: always
 
   grafana:
     image: grafana/grafana:6.2.1
@@ -23,6 +24,7 @@ services:
       - influxdb
     volumes:
       - grafana-storage:/var/lib/grafana
+    restart: always
 
 volumes:
   influxdb-storage:
