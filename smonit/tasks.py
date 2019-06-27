@@ -61,6 +61,7 @@ def check_changes(minion):
         states_changes_list = []
         failure_state_changes = []
         highstate_value = 0
+        highstate_issue = 0
 
         if len(result) > 0:
             if 'disabled' not in result:
@@ -98,10 +99,8 @@ def check_changes(minion):
                     influxdb.write_points(data_number_failure_changes)
                     sleep(2)
 
-                highstate_issue = 1
-
                 if len(failure_state_changes) >= 1:
-                    highstate_issue = 0
+                    highstate_issue = 1
 
             data_highstate_issue = schema.with_tag('highstate_issue', minion, highstate_issue)
             influxdb.write_multiple_data(data_highstate_issue)
