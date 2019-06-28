@@ -7,3 +7,4 @@ Smonit:
     ✔ Minions with highstate disabled @done(19-06-27 00:44)
     ✔ Use this tool as scheduler (no need the default one) @done(19-06-27 00:44)
     ✔ Easy integration with Grafana @done(19-06-27 00:44)
+    ▪ Show total number of changes and failure states

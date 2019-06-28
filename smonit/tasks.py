@@ -78,10 +78,10 @@ def check_changes(minion):
                         stderr = state_info.get('stderr')
 
                         if stdout != '' or stderr != '':
-                            # Add all states with status change. Add even for duplication
+                            # Add all states with status change. Add duplication
                             states_changes_list.append(state)
                         if stderr != '':
-                            # Add all states with status failed. For duplication too
+                            # Add all states with status failed. Add duplication
                             failure_state_changes.append(state)
 
                 # Add only number of states
@@ -102,9 +102,19 @@ def check_changes(minion):
                 if len(failure_state_changes) >= 1:
                     highstate_issue = 1
 
+            # Show if highstate run has some failure changes
             data_highstate_issue = schema.with_tag('highstate_issue', minion, highstate_issue)
             influxdb.write_multiple_data(data_highstate_issue)
 
+            # Show the total number of failure changes
+            data_total_failure_number = schema.with_tag('total_failure_changes', minion, len(failure_state_changes))
+            influxdb.write_multiple_data(data_total_failure_number)
+
+            # Show the total number of changes
+            data_total_changes = schema.with_tag('total_changes', minion, len(states_changes_list))
+            influxdb.write_multiple_data(data_total_changes)
+
+            # Show if highstate is disabled
             data_highstate_disabled = schema.with_tag('highstate_disabled', minion, highstate_value)
             influxdb.write_multiple_data(data_highstate_disabled)
     return
