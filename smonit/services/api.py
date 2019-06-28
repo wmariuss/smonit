@@ -135,6 +135,9 @@ class Salt(object):
 
                     if len(changes) > 0:
                         if changes['stdout'] != '' or changes['stderr'] != '':
+                            # Add duration time in changes list
+                            changes.update({'time': info['duration']})
+
                             changes_list.update({
                                 info['__id__']: {
                                     info['__sls__']: changes

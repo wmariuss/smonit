@@ -60,6 +60,8 @@ def check_changes(minion):
         states_list = []
         states_changes_list = []
         failure_state_changes = []
+        time_list = []
+
         highstate_value = 0
         highstate_issue = 0
 
@@ -80,6 +82,7 @@ def check_changes(minion):
                         if stdout != '' or stderr != '':
                             # Add all states with status change. Add duplication
                             states_changes_list.append(state)
+                            time_list.append(state_info.get('time'))
                         if stderr != '':
                             # Add all states with status failed. Add duplication
                             failure_state_changes.append(state)
@@ -117,4 +120,8 @@ def check_changes(minion):
             # Show if highstate is disabled
             data_highstate_disabled = schema.with_tag('highstate_disabled', minion, highstate_value)
             influxdb.write_multiple_data(data_highstate_disabled)
+
+            # Add duration time for highstate run
+            duration_time = schema.with_tag('highstate_duration', minion, sum(time_list))
+            influxdb.write_multiple_data(duration_time)
     return
