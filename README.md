@@ -1,7 +1,5 @@
 # smonit
 
-[__This is a prototype__]
-
 Monitor salt activities.
 
 ## Roadmap

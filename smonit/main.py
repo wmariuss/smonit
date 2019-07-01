@@ -1,35 +1,25 @@
+import os
 import falcon
-import logging
-import pprint
+from apscheduler.schedulers.background import BackgroundScheduler
 
-from smonit.tasks import connected, pending, denied, rejected, respond
-from smonit.tasks import check_changes
 from smonit.views import Index
+from smonit.execution import Run
+from smonit.services.api import InfluxDb
 
-from smonit.services.api import Salt, InfluxDb
 
-influx = InfluxDb()
-
+# influx = InfluxDb()
 # print(influx.list_databases)
 # print(influx.drop_database('smonit'))
 # print(influx.create_database('smonit'))
-
-connected()
-pending()
-denied()
-rejected()
-respond('saltd')
-print(check_changes('saltd'))
-
 # pprint.pprint(influx.query('select * from highstate_disabled'))
 
-salt = Salt()
-# minions = salt.minions_accepted
-minions = ['saltd']
-# for minion in minions:
-#     pprint.pprint(salt.cmd(minion, 'state.highstate'))
-#     pprint.pprint(salt.changes(minion))
+run = Run()
+interval = os.environ.get('SCHEDULER_INTERVAL', 60)
 
+scheduler = BackgroundScheduler()
+scheduler.add_job(run.jobs_global, 'interval', minutes=2, id='global')
+scheduler.add_job(run.jobs_minion, 'interval', minutes=int(interval), id='minion')
+scheduler.start()
 
 app = falcon.API()
 app.add_route('/', Index())

@@ -26,6 +26,16 @@ services:
       - grafana-storage:/var/lib/grafana
     restart: always
 
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-storage:/data
+    restart: unless-stopped
+
 volumes:
   influxdb-storage:
   grafana-storage:
+  redis-storage:

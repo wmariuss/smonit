@@ -133,7 +133,8 @@ class Salt(object):
                 for info in values:
                     changes = info['changes']
 
-                    if len(changes) > 0:
+                    if len(changes) >= 1:
+                        # FIX ME: Add a sleep time if salt-minion is not initialized. Error: KeyError: 'stdout
                         if changes['stdout'] != '' or changes['stderr'] != '':
                             # Add duration time in changes list
                             changes.update({'time': info['duration']})
