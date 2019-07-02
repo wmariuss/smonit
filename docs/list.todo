@@ -8,3 +8,7 @@ Smonit:
     ✔ Use this tool as scheduler (no need the default one) @done(19-06-27 00:44)
     ✔ Easy integration with Grafana @done(19-06-27 00:44)
     ✔ Show total number of changes and failure states @done(19-06-28 15:06)
+
+General:
+    ▪ Boot workers in docker containers
+    ▪ Use worker config file
