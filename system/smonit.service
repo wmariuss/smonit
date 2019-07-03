@@ -1,0 +1,26 @@
+[Unit]
+Description=Smonit
+Documentation=https://github.com/wmariuss/smonit.git
+After=network.target
+
+[Service]
+PermissionsStartOnly=true
+Type=simple
+PIDFile=/run/smonit/smonit.pid
+User=root
+Group=root
+WorkingDirectory=/opt/work/smonit
+EnvironmentFile=/opt/work/smonit/system/env
+ExecStartPre=/bin/mkdir /run/smonit
+ExecStart=/usr/bin/env bash start.sh prod
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+ExecStopPost=/bin/rm -rf /run/smonit
+PrivateTmp=true
+Restart=always
+RestartSec=90
+StartLimitInterval=400
+StartLimitBurst=3
+
+[Install]
+WantedBy=multi-user.target
