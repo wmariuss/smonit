@@ -16,14 +16,18 @@ class Run(object):
         self.redis_conn = Redis(host=redis_host, port=redis_port)
         self.queue = Queue(connection=self.redis_conn)
         self.salt = Salt()
+        self.minions_list = self.salt.minions_accepted
 
-    def jobs_global(self):
+    def job_global(self):
         self.queue.enqueue(connected)
         self.queue.enqueue(pending)
         self.queue.enqueue(denied)
         self.queue.enqueue(rejected)
 
-    def jobs_minion(self):
-        for minion in self.salt.minions_accepted:
-            self.queue.enqueue(respond, minion)
+    def job_minion(self):
+        for minion in self.minions_list:
             self.queue.enqueue(check_changes, minion)
+
+    def job_respond_minion(self):
+        for minion in self.minions_list:
+            self.queue.enqueue(respond, minion)
