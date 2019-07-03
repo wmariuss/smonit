@@ -10,5 +10,6 @@ Smonit:
     ✔ Show total number of changes and failure states @done(19-06-28 15:06)
 
 General:
+    ✔ Manage service process with systemd @done(19-07-03 11:42)
     ▪ Boot workers in docker containers
     ▪ Use worker config file
