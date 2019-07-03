@@ -24,7 +24,6 @@ class Run(object):
         self.queue.enqueue(rejected)
 
     def jobs_minion(self):
-        minions = ['saltd']
-        for minion in minions:
+        for minion in self.salt.minions_accepted:
             self.queue.enqueue(respond, minion)
             self.queue.enqueue(check_changes, minion)
