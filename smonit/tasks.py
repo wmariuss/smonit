@@ -1,5 +1,7 @@
+from os import path, mkdir
 from datetime import datetime
 from time import sleep
+from tinydb import TinyDB, Query
 
 from smonit.services.api import Salt
 from smonit.services.api import InfluxDb
@@ -39,17 +41,61 @@ def rejected():
     return influxdb.write_multiple_data(data)
 
 
-def respond(minion):
+def respond_minion_db(minion):
+    db_path = '/etc/salt/smonit'
     success_respond = salt.respond_minion(minion)
-    tag = False
-    value = 1
+    response = False
+
+    if not path.isdir(db_path):
+        mkdir(db_path)
 
     if success_respond:
-        tag = True
+        response = True
 
-    data = schema.responding('respond', tag, minion, value)
+    db = TinyDB(f'{db_path}/db.json')
+    host_query = Query()
+    check_minion = db.search(host_query.host == minion)
 
-    return influxdb.write_multiple_data(data)
+    if len(check_minion) < 1:
+        db.insert({'host': minion, 'response': response})
+    else:
+        db.update({'response': response}, host_query.host == minion)
+
+    return
+
+
+def respond_minion():
+    db_path = '/etc/salt/smonit/db.json'
+
+    if path.isfile(db_path):
+        db = TinyDB(db_path)
+        response_query = Query()
+
+        check_response = db.search(response_query.response == 1)
+        check_not_response = db.search(response_query.response == 0)
+
+        count_minions_response = 0
+        count_minions_not_response = 0
+
+        if len(check_response) >= 1:
+            count_minions_response = len(check_response)
+        if len(check_not_response) >= 1:
+            count_minions_not_response = len(check_not_response)
+
+        data_count_response = schema.default('total_response', count_minions_response)
+        influxdb.write_multiple_data(data_count_response)
+
+        data_count_not_response = schema.default('total_not_response', count_minions_not_response)
+        influxdb.write_multiple_data(data_count_not_response)
+
+        for data in db:
+            response = data.get('response')
+            host = data.get('host')
+
+            data_response = schema.responding('response', host, response)
+            influxdb.write_multiple_data(data_response)
+
+    return
 
 
 def check_changes(minion):
