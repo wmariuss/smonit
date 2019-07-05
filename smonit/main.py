@@ -21,14 +21,10 @@ job_defaults = {
     }
 
 
-def global_jobs():
-    run.job_global()
-    run.job_respond_minion()
-
-
 scheduler = BackgroundScheduler(executors=executors, job_defaults=job_defaults)
-scheduler.add_job(global_jobs, 'interval', minutes=2, id='global')
-scheduler.add_job(run.job_minion, 'interval', minutes=int(interval), id='job_minion')
+scheduler.add_job(run.job_global, 'interval', minutes=1, id='global')
+scheduler.add_job(run.job_respond, 'interval', minutes=2, id='response')
+scheduler.add_job(run.job_info, 'interval', minutes=int(interval), id='info')
 scheduler.start()
 
 app = falcon.API()

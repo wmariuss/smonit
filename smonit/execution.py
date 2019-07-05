@@ -2,8 +2,8 @@ import os
 from rq import Queue
 from redis import Redis
 
-from smonit.tasks import connected, pending, denied, rejected, respond
-from smonit.tasks import check_changes
+from smonit.tasks import connected, pending, denied, rejected, respond_minion
+from smonit.tasks import check_changes, respond_minion_db
 from smonit.views import Index
 from smonit.services.api import Salt
 
@@ -24,10 +24,12 @@ class Run(object):
         self.queue.enqueue(denied)
         self.queue.enqueue(rejected)
 
-    def job_minion(self):
+    def job_info(self):
         for minion in self.minions_list:
             self.queue.enqueue(check_changes, minion)
 
-    def job_respond_minion(self):
+    def job_respond(self):
+        self.queue.enqueue(respond_minion)
+
         for minion in self.minions_list:
-            self.queue.enqueue(respond, minion)
+            self.queue.enqueue(respond_minion_db, minion)

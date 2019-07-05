@@ -30,16 +30,15 @@ class Data(object):
 
         return data
 
-    def responding(self, mesurement, tag, minion, value):
+    def responding(self, mesurement, minion, response):
         data = [{
             "measurement": mesurement,
             "time": time(),
             "tags": {
-                "active": tag
+                "minion": minion
             },
             "fields": {
-                "minion": minion,
-                "value": value
+                "response": response
             }
         }]
 

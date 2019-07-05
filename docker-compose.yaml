@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   influxdb:
-    image: influxdb:1.7.6
+    image: influxdb:1.7.7
     container_name: influxdb
     ports:
       - "8086:8086"
@@ -11,10 +11,10 @@ services:
       - '.env.docker'
     volumes:
       - influxdb-storage:/var/lib/influxdb
-    restart: always
+    restart: unless-stopped
 
   grafana:
-    image: grafana/grafana:6.2.1
+    image: grafana/grafana:6.2.5
     container_name: grafana
     ports:
       - "3000:3000"
@@ -24,11 +24,11 @@ services:
       - influxdb
     volumes:
       - grafana-storage:/var/lib/grafana
-    restart: always
+    restart: unless-stopped
 
   redis:
     image: redis:alpine
-    container_name: redis
+    container_name: redis-server
     ports:
       - "6379:6379"
     volumes:
