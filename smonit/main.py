@@ -5,7 +5,6 @@ from apscheduler.executors.pool import ProcessPoolExecutor
 
 from smonit.views import Index
 from smonit.execution import Run
-from smonit.services.api import InfluxDb
 
 
 run = Run()
