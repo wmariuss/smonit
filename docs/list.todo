@@ -11,5 +11,6 @@ Smonit:
 
 General:
     ✔ Manage service process with systemd @done(19-07-03 11:42)
-    ▪ Boot workers in docker containers
+    ▪ Run the service in the docker container
+    ▪ Boot workers in docker container
     ▪ Use worker config file
