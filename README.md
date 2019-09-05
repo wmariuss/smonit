@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/wmariuss/smonit.svg?branch=master)](https://travis-ci.com/wmariuss/smonit)
 
-Monitor salt activities.
+Collect and monitor salt activities.
 
 ## Roadmap
 
