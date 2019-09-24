@@ -10,8 +10,8 @@ from smonit.services.api import Salt
 
 class Run(object):
     def __init__(self):
-        redis_host = os.environ.get('REDIS_HOST', 'localhost')
-        redis_port = os.environ.get('REDIS_PORT', 6379)
+        redis_host = os.environ.get("REDIS_HOST", "localhost")
+        redis_port = os.environ.get("REDIS_PORT", 6379)
 
         self.redis_conn = Redis(host=redis_host, port=redis_port)
         self.queue = Queue(connection=self.redis_conn)

@@ -1,8 +1,9 @@
-# smonit
+# Smonit
 
 [![Build Status](https://travis-ci.com/wmariuss/smonit.svg?branch=master)](https://travis-ci.com/wmariuss/smonit)
 [![Tag](https://img.shields.io/github/v/tag/wmariuss/smonit)](https://github.com/wmariuss/smonit/tags)
 [![License](https://img.shields.io/github/license/wmariuss/smonit)](https://github.com/wmariuss/smonit/blob/master/LICENSE)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 Collect and monitor salt activities.
 
