@@ -7,8 +7,6 @@
 
 Collect and monitor salt activities.
 
-![Smonit](docs/content/img1.png)
-
 ## Roadmap
 
 Check the list [here](docs/list.todo).
