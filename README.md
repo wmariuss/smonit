@@ -40,7 +40,7 @@ minutes, states and highstate details every `SCHEDULER_INTERVAL` minutes.
 
 ```bash
 pip install pipenv
-pipenv install --deploy
+pipenv install --system --deploy
 ```
 
 Tagged versions are listed under
