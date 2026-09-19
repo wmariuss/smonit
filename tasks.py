@@ -21,8 +21,7 @@ def clean(c):
 
 @task
 def upload(c, internal=False, external=False):
-    """All option based on .pypirc file
-    """
+    """All option based on .pypirc file"""
     if internal:
         c.run("python setup.py sdist upload -r pypicloud")
     if external:
