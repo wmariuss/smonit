@@ -7,7 +7,6 @@ from smonit.services.api import Salt
 from smonit.services.api import InfluxDb
 from smonit.schema import Data
 
-
 salt = Salt()
 influxdb = InfluxDb()
 schema = Data()
@@ -184,6 +183,8 @@ def check_changes(minion):
             influxdb.write_multiple_data(data_highstate_disabled)
 
             # Add duration time for highstate run
-            duration_time = schema.with_tag("highstate_duration", minion, sum(time_list))
+            duration_time = schema.with_tag(
+                "highstate_duration", minion, sum(time_list)
+            )
             influxdb.write_multiple_data(duration_time)
     return

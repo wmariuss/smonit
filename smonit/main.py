@@ -6,7 +6,6 @@ from apscheduler.executors.pool import ProcessPoolExecutor
 from smonit.views import Index
 from smonit.execution import Run
 
-
 run = Run()
 interval = os.environ.get("SCHEDULER_INTERVAL", 60)
 
