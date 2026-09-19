@@ -4,18 +4,19 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-pep8 = "*"
+black = "*"
 mypy = "*"
 pylint = "*"
 
 [packages]
 influxdb = "==5.2.2"
 falcon = "==2.0.0"
-gunicorn = "==19.9.0"
-rq = "==1.0"
+gunicorn = "==23.0.0"
+rq = "==1.16.2"
+redis = "<6"
 invoke = "*"
-apscheduler = "==3.6.0"
+apscheduler = "==3.10.4"
 tinydb = "==3.13.0"
 
 [requires]
-python_version = "3.6"
+python_version = "3.12"
