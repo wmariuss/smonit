@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/wmariuss/smonit/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/wmariuss/smonit/actions/workflows/ci.yml)
 [![Tag](https://img.shields.io/github/v/tag/wmariuss/smonit)](https://github.com/wmariuss/smonit/tags)
-[![Python](https://img.shields.io/badge/python-3.12%2B-3776AB)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/python-3.10-3776AB)](https://www.python.org/)
 [![License](https://img.shields.io/github/license/wmariuss/smonit)](LICENSE)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
@@ -30,13 +30,27 @@ minutes, states and highstate details every `SCHEDULER_INTERVAL` minutes.
 
 ## Requirements
 
-- Python 3.12 or newer, on the salt-master host
-- Salt master 2018.3 or newer, with its Python package importable by smonit
+- Salt master 3006 or newer
+- Python 3.10, the interpreter Salt runs on: smonit imports `salt` from the
+  same Python, so it has to be one Salt supports, and every current Salt
+  release supports 3.8 to 3.10
 - InfluxDB 1.7 or newer on the 1.x line
 - Redis 4 or newer
 - Grafana 6 or newer for the dashboard
 
 ## Install
+
+Salt's official packages are "onedir" builds with their own Python 3.10
+under `/opt/saltstack/salt`. Install smonit's dependencies into that Python
+with `salt-pip`, and run smonit with it, so `import salt` resolves:
+
+```bash
+salt-pip install pipenv
+/opt/saltstack/salt/bin/python3 -m pipenv install --deploy --system
+```
+
+With a Salt installed from PyPI into a Python 3.10 of your own, the plain
+form works:
 
 ```bash
 pip install pipenv
