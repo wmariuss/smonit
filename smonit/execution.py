@@ -12,8 +12,10 @@ class Run(object):
     def __init__(self):
         redis_host = os.environ.get("REDIS_HOST", "localhost")
         redis_port = os.environ.get("REDIS_PORT", 6379)
+        # The same database the worker listens on (worker.py), or nothing runs.
+        redis_db = os.environ.get("REDIS_DB", 1)
 
-        self.redis_conn = Redis(host=redis_host, port=redis_port)
+        self.redis_conn = Redis(host=redis_host, port=redis_port, db=redis_db)
         self.queue = Queue(connection=self.redis_conn)
         self.salt = Salt()
         self.minions_list = self.salt.minions_accepted

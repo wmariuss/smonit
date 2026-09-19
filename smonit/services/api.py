@@ -1,10 +1,12 @@
 import os
 import logging
 
+# Salt is not a package dependency: smonit runs on the salt-master host and
+# uses the salt already installed there, so the lint job cannot import it.
 try:
-    import salt.config
-    import salt.client
-    import salt.utils
+    import salt.config  # pylint: disable=import-error
+    import salt.client  # pylint: disable=import-error
+    import salt.utils  # pylint: disable=import-error
 except ImportError:
     raise RuntimeError("You must install salt package to use this service")
 
@@ -13,7 +15,7 @@ try:
 except ImportError:
     raise RuntimeError("Install influxdb lib/package")
 
-from salt.key import Key
+from salt.key import Key  # pylint: disable=import-error
 from smonit.exceptions import SaltExceptions
 from smonit.exceptions import GeneralExceptions
 
@@ -109,6 +111,7 @@ class Salt(object):
         """
         result = self.cmd(minion, "state.highstate")
         result = result[minion][return_key]
+        values = None
 
         if result:
             try:
